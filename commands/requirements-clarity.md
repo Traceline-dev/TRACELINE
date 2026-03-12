@@ -55,22 +55,11 @@ Restate your understanding of what the user wants to accomplish using this struc
 
 ### 8. Thinking step by step
 
-**BEFORE your first thought, YOU MUST run:**
-```bash
-uv run ${CLAUDE_PLUGIN_ROOT}/lib/list_skills_by_discovery.py requirements-clarity
-```
-This outputs skills to evaluate. Do NOT proceed to thinking without this output.
-
 **IMPORTANT:** Always re-run sequential thinking on EVERY user message, even if you previously had confidence = ✓. When users add more requirements after you've achieved clarity, you must re-assess for new ambiguities. Don't assume confidence persists across iterations.
 
-**Two-Phase Thinking:**
+**Thinking:**
 
-**Thought 1: Skill Evaluation** (thoughtNumber: 1, totalThoughts: 2, nextThoughtNeeded: true)
-- Review script output for matching skills
-- **ONLY evaluate skills that appear in the script output** - do NOT suggest skills based on semantic matching
-- Note any matches for later confirmation
-
-**Thought 2: Requirements Extraction** (thoughtNumber: 2, totalThoughts: 2, nextThoughtNeeded: false)
+**Thought 1: Requirements Extraction** (thoughtNumber: 1, totalThoughts: 1, nextThoughtNeeded: false)
 - Identify current task boundary (what user just explained NOW)
 - Distinguish current task from previous completed tasks
 - Extract what user explicitly stated they want for THIS task (these become requirements)
@@ -99,38 +88,16 @@ Only after completing both thoughts, provide the structured output.
 **[Topic]:** [Specific uncertainty - not a question]
 **[Topic]:** [Alternative interpretation possible]
 
-⏺ Knowledge Retrieval (if hippocampus evaluation matched)
-
-**Hippocampus:** [Why hippocampus could help - what documentation/knowledge to retrieve]
-→ Action: Retrieve context before continuing disambiguation
-
-⏺ Skill Suggestions (if requirements-phase skills matched)
-
-**[Skill name]:** [Why this skill applies - look for `(discovery: requirements-clarity)` in description]
-→ Action: Confirm with user, then invoke skill
 ```
-
-**Skill/Hippocampus Confirmation (at Confidence ✓):**
-When you reach Confidence ✓ AND skills/hippocampus were noted in Thought 1:
-- Use AskUserQuestion to confirm before proceeding
-- Present each suggested skill/hippocampus with its match rationale
-- Options: "Use [skill/hippocampus]" / "Skip"
-- If confirmed: Invoke `Skill()` to execute
-- This happens AFTER requirements are extracted, not blocking Thought 2
-
-**Prior Rejections Do NOT Carry Forward:**
-If a user rejected a skill earlier in the session (e.g., during onboarding), you MUST still ask for confirmation when the skill is identified as relevant. Prior rejection was for that moment's context - when you identify the skill as relevant again, ask again. Do NOT assume prior rejection still applies.
 
 After displaying this structure:
 - If you have ambiguities (✗): Use the AskUserQuestion tool to resolve them. Format each ambiguity as a question with options. OR use investigation tools (warp_grep, agent general-purpose, bash read-only) if the ambiguity can be resolved through research.
 - If confidence is ✓ (no ambiguities):
-  1. If skills/hippocampus were noted: confirm with user via AskUserQuestion
-  2. Use TodoWrite to write all requirements as pending todos so user can track progress without scrolling.
-  3. Call SlashCommand with `/implementation-clarity`
+  1. Use TodoWrite to write all requirements as pending todos so user can track progress without scrolling.
+  2. Call SlashCommand with `/implementation-clarity`
 
 **What NOT to do:**
 - Do not implement solutions (no code edits, no document creation)
 - Do not proceed to implementation when confidence = ✗
 - Do not ask more than 4 questions in AskUserQuestion (keep focused)
 - Do not assume confidence persists when user adds more requirements
-- Do not skip skill confirmation based on prior session rejections

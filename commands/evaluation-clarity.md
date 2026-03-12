@@ -52,20 +52,9 @@ BEHAVIOR: Proceed to Commit phase. Do NOT test ACs in this session.
 
 ### 8. Thinking step by step
 
-**BEFORE your first thought, YOU MUST run:**
-```bash
-uv run ${CLAUDE_PLUGIN_ROOT}/lib/list_skills_by_discovery.py evaluation-clarity
-```
-This outputs skills to evaluate. Do NOT proceed to thinking without this output.
+**Thinking:**
 
-**Two-Phase Thinking:**
-
-**Thought 1: Skill Evaluation** (thoughtNumber: 1, totalThoughts: 2, nextThoughtNeeded: true)
-- Review script output for matching skills
-- **ONLY evaluate skills that appear in the script output** - do NOT suggest skills based on semantic matching
-- Note any matches for later confirmation
-
-**Thought 2: Evaluation Assessment** (thoughtNumber: 2, totalThoughts: 2, nextThoughtNeeded: false)
+**Thought 1: Evaluation Assessment** (thoughtNumber: 1, totalThoughts: 1, nextThoughtNeeded: false)
 Think about how we verify success:
 - **Which layers are touched?** Database, Backend, Frontend, Documentation - identify all affected layers
 - **What sanity checks apply?** For each layer touched, what proves it works at infrastructure level?
@@ -99,15 +88,8 @@ Present your understanding of success criteria using this structure:
 After displaying this structure:
 - If you have ambiguities (✗): Use AskUserQuestion for user preferences, or investigation tools for technical approaches
 - If confidence is ✓:
-  1. **If skills matched in Thought 1:** Use AskUserQuestion to confirm which to invoke
-  2. Use TodoWrite to write all success criteria as todos
-  3. Then call ExitPlanMode with complete evaluation criteria
-
-**Skill Confirmation (multiSelect: true):**
-When confirming skills, use AskUserQuestion with multiSelect: true.
-
-**Prior Rejections Do NOT Carry Forward:**
-If a user rejected a skill earlier in the session, you MUST still ask for confirmation when the skill is identified as relevant here.
+  1. Use TodoWrite to write all success criteria as todos
+  2. Then call ExitPlanMode with complete evaluation criteria
 
 **What NOT to do:**
 - Do not create subjective quality criteria ("should look good") and assign to AI

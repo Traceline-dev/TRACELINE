@@ -29,15 +29,10 @@ Be concise and professional. Your introduction should be brief (3-4 sentences). 
    |------|-------|
    | Environment | {environment} |
    | Project | {folder_name} |
-   | Detected Label | {detected_label} (or "none" if empty) |
-   | Label Valid | {validated_label} (true/false/null) |
-   | SSH Hosts | {ssh_hosts} |
-   | GH Extensions | {gh_extensions} |
-   | CLIs Available | {clis} |
    | Issue Repos | DaveX2001/deliverable-tracking (clients), DaveX2001/claude-code-improvements (system) |
    ```
 
-   Store `{folder_name}`, `{detected_label}`, `{validated_label}`, and `{issue_list}` for use in Step 4.
+   Store `{folder_name}` and `{issue_list}` for use in Step 4.
    Continue to Step 1 regardless of capture success/failure.
 
 1. **Protocol Understanding:** Use sequential_thinking (2 thoughts minimum) to understand the v2 protocol from CLAUDE.md
@@ -55,61 +50,24 @@ Be concise and professional. Your introduction should be brief (3-4 sentences). 
 
 4. **Project Setup:**
 
-   **Step 4a - Auto-detect project label (using bootstrap values):**
-
-   Use `{detected_label}` and `{validated_label}` from Step 0 bootstrap output.
-
-   **If `{validated_label}` is `true`:**
-   - Label exists in deliverable-tracking repo
-   - Use `{detected_label}`, continue to Step 4b
-
-   **If `{validated_label}` is `false`:**
-   - Label detected but doesn't exist in repo
-   - Treat as "no pattern" case below
-
-   **If `{validated_label}` is `null` or `{detected_label}` is empty:**
-
-   Fetch labels for JIT rename: `gh label list --repo DaveX2001/deliverable-tracking --json name --jq '.[].name'`
-
-   Offer JIT rename via AskUserQuestion:
-   *Question: "Folder '{folder_name}' doesn't follow naming convention. Rename to enable auto-detection?"*
-   - Options: List project labels (uppercase ones) + "Skip (pick label manually)"
-   - Header: "Rename to"
-
-   **If user selects a label:**
-   1. Construct new name: `{SELECTED_LABEL}__{folder_name}`
-   2. Rename local folder: `mv "$(pwd)" "$(dirname "$(pwd)")/{SELECTED_LABEL}__{folder_name}"`
-   3. Rename GitHub repo (if git remote exists): `gh repo rename {SELECTED_LABEL}__{folder_name}`
-   4. Announce: "Folder and repo renamed to {new_name}. Future sessions will auto-detect {SELECTED_LABEL}."
-   5. Continue with selected label
-
-   **If user selects "Skip":**
-   - Fall back to manual label selection via AskUserQuestion
-
    **Step 4b - Display issues from bootstrap:**
    Use `{issue_list}` from Step 0 bootstrap output (already filtered to to-do/in-progress).
 
    Display as plain text:
    ```
-   Available issues for {detected_label}:
+   Available issues:
    #{number}: {title} [{status}]
    ...
    ```
 
    **Step 4c - Combined AskUserQuestion:**
-   Use a SINGLE AskUserQuestion with 3 questions:
+   Use a SINGLE AskUserQuestion with 2 questions:
 
    *Question 1 - Issue Selection:*
    - Options: "Skip issues", with user typing issue number via "Other"
    - Header: "Issue #"
 
-   *Question 2 - README Setup:*
-   - Backend README (FastAPI + Supabase standards)
-   - Frontend README (React standards)
-   - Both READMEs
-   - Skip (not a coding project)
-
-   *Question 3 - Orientation Investigation:*
+   *Question 2 - Orientation Investigation:*
    - Skip (no investigation)
    - Quick (parse DoD checkboxes + git status)
    - Full (validate DoD against actual code with evidence)
@@ -202,13 +160,7 @@ Be concise and professional. Your introduction should be brief (3-4 sentences). 
 
       **CRITICAL:** Code tells you WHAT EXISTS. Comments tell you WHAT TO DO NEXT.
 
-   f. **README Fetch (if user chose README in Step 4c):**
-      ```bash
-      gh api repos/veloxforce/velox-global-adrs/contents/README-FAST-API-BACKEND.md -H "Accept: application/vnd.github.raw"
-      ```
-      (Replace filename for frontend: `README-REACT-FRONTEND.md`)
-
-   g. **Orientation Investigation (based on user's choice in Step 4c Question 3):**
+   f. **Orientation Investigation (based on user's choice in Step 4c Question 2):**
 
       **If user selected "Full":**
 
