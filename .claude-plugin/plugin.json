@@ -4,24 +4,5 @@
   "description": "Developer position plugin — clarity workflow, worktree, commit guards, deliverable tracking",
   "author": {
     "name": "Marius Wilsch"
-  },
-  "commands": [
-    "ac-verify",
-    "evaluation-clarity",
-    "implementation-clarity",
-    "improve-system",
-    "issue-comment",
-    "merge",
-    "onboarding",
-    "report",
-    "requirements-clarity",
-    "rubber-duck"
-  ],
-  "skills": [
-    "ac-create",
-    "conversation-reader",
-    "create-release-epic",
-    "deliverable-tracking",
-    "worktree"
-  ]
+  }
 }
